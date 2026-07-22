@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harlam Unified School District</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17263f;
+    --navy:#1e3a5f;
+    --poppy:#e07a2b;        /* City of Orange citrus */
+    --poppy-deep:#b85c14;
+    --paper:#f7f5ef;
+    --card:#ffffff;
+    --line:#dcd6c8;
+    --muted:#5b6879;
+    --gold:#d9a441;
+    --display:'Zilla Slab',serif;
+    --body:'Public Sans',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.6}
+  a{color:var(--poppy-deep)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* Top strip */
+  .strip{background:var(--ink);color:#cfd8e6;font-size:.78rem;padding:6px 0}
+  .strip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+  /* Header */
+  header{background:var(--navy);color:#fff;border-bottom:4px solid var(--poppy)}
+  .masthead{display:flex;align-items:center;gap:18px;padding:18px 0}
+  .seal{flex:none}
+  .district-name{font-family:var(--display);font-weight:700;font-size:1.5rem;line-height:1.15;letter-spacing:.01em}
+  .district-sub{font-size:.75rem;text-transform:uppercase;letter-spacing:.18em;color:#b9c6d8;margin-top:2px}
+  nav{background:#16304f}
+  nav .wrap{display:flex;flex-wrap:wrap}
+  nav a{color:#dbe4f0;text-decoration:none;padding:12px 18px;font-size:.85rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-bottom:3px solid transparent}
+  nav a:hover{background:#1d3d63;color:#fff}
+  nav a.active{border-bottom-color:var(--gold);color:#fff}
+
+  /* Pages */
+  .page{display:none;animation:fade .25s ease}
+  .page.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){.page{animation:none}}
+
+  /* Hero */
+  .hero{background:linear-gradient(160deg,var(--navy) 0%,#2a4d7a 100%);color:#fff;padding:64px 0 72px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(224,122,43,.18)}
+  .hero h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.1rem);font-weight:700;max-width:640px;line-height:1.15}
+  .hero p{max-width:560px;margin-top:14px;color:#d7e0ec}
+  .hero .cta{display:inline-block;margin-top:26px;background:var(--poppy);color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:4px}
+  .hero .cta:hover{background:var(--poppy-deep)}
+
+  /* Announcement bar */
+  .announce{background:var(--gold);color:#3a2c07;font-size:.85rem;padding:8px 0;font-weight:600}
+
+  section{padding:48px 0}
+  h2{font-family:var(--display);font-size:1.7rem;font-weight:700;margin-bottom:6px}
+  .kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.22em;color:var(--poppy-deep);font-weight:700;margin-bottom:6px}
+  .lede{color:var(--muted);max-width:640px;margin-bottom:28px}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .stat{background:var(--card);padding:22px 18px}
+  .stat b{display:block;font-family:var(--display);font-size:1.9rem;color:var(--navy);line-height:1.1}
+  .stat span{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+
+  /* Cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--navy);padding:24px}
+  .card.orange{border-top-color:var(--poppy)}
+  .card h3{font-family:var(--display);font-size:1.15rem;margin-bottom:4px;line-height:1.3}
+  .tag{display:inline-block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:2px 8px;margin-bottom:10px;color:var(--muted)}
+  .card p{font-size:.9rem;color:var(--muted)}
+  .card .meta{margin-top:14px;font-size:.8rem;border-top:1px dashed var(--line);padding-top:10px}
+  .card .meta div{display:flex;justify-content:space-between;padding:2px 0}
+  .card .meta div b{font-weight:600;color:var(--ink)}
+
+  /* Superintendent */
+  .supe{display:grid;grid-template-columns:220px 1fr;gap:32px;align-items:start}
+  .portrait{background:var(--navy);border:1px solid var(--line);aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:var(--display);font-size:4rem;font-weight:700;position:relative}
+  .portrait small{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:var(--body);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:#9fb1c8}
+  blockquote{border-left:4px solid var(--gold);padding:8px 0 8px 18px;margin:18px 0;font-family:var(--display);font-size:1.15rem;color:var(--navy)}
+  @media(max-width:640px){.supe{grid-template-columns:1fr}.portrait{max-width:220px}}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);font-size:.9rem}
+  th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:var(--navy);color:#fff;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+  tr:last-child td{border-bottom:none}
+
+  /* Footer */
+  footer{background:var(--ink);color:#aeb9c9;padding:40px 0;margin-top:40px;font-size:.85rem}
+  footer .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px}
+  footer h4{color:#fff;font-family:var(--display);margin-bottom:10px}
+  footer a{color:#d3ac5e;text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  .fineprint{border-top:1px solid #2c3c55;margin-top:28px;padding-top:16px;text-align:center;font-size:.75rem;color:#7d8ba0}
+
+  .notice{background:#fff8ec;border:1px solid var(--gold);padding:14px 18px;font-size:.85rem;margin-top:24px;color:#5a4a1e}
+</style>
+</head>
+<body>
+
+<div class="strip">
+  <div class="wrap">
+    <span>123456 Fake Street, Orange, CA 92856 &nbsp;•&nbsp; (714) 555-0188</span>
+    <span>Office hours: Mon–Fri, 7:30 AM – 4:30 PM</span>
+  </div>
+</div>
+
+<header>
+  <div class="wrap masthead">
+    <svg class="seal" width="72" height="72" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="48" fill="#f7f5ef"/>
+      <circle cx="50" cy="50" r="48" fill="none" stroke="#d9a441" stroke-width="3"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#1e3a5f" stroke-width="2"/>
+      <path d="M50 22 L58 40 L78 42 L63 55 L67 74 L50 64 L33 74 L37 55 L22 42 L42 40 Z" fill="#e07a2b"/>
+      <text x="50" y="14" text-anchor="middle" font-size="8" fill="#1e3a5f" font-family="serif" font-weight="bold">HARLAM USD</text>
+      <text x="50" y="93" text-anchor="middle" font-size="7" fill="#1e3a5f" font-family="serif">EST. 1953</text>
+    </svg>
+    <div>
+      <div class="district-name">Harlam Unified School District</div>
+      <div class="district-sub">Excellence • Curiosity • Community</div>
+    </div>
+  </div>
+  <nav id="nav">
+    <div class="wrap">
+      <a href="#home">Home</a>
+      <a href="#about">Our District</a>
+      <a href="#schools">Schools</a>
+      <a href="#superintendent">Superintendent</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ============ HOME ============ -->
+<main>
+<div class="page" id="page-home">
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker" style="color:var(--gold)">Serving the City of Orange since 1953</div>
+      <h1>Every student prepared. Every path celebrated.</h1>
+      <p>Harlam USD serves more than 27,000 students across five uniquely specialized campuses in the heart of Orange County — from the arts to athletics to applied technology.</p>
+      <a class="cta" href="#schools">Explore Our Schools</a>
+    </div>
+  </div>
+  <div class="announce">
+    <div class="wrap">📣 Enrollment for the 2026–27 school year opens August 3. Kindergarten roundup begins August 10.</div>
+  </div>
+
+  <section class="wrap">
+    <div class="kicker">District at a Glance</div>
+    <h2>By the Numbers, 2025–26</h2>
+    <p class="lede">Key figures reported to the California Department of Education, in line with peer districts across Orange County.</p>
+    <div class="stats">
+      <div class="stat"><b>27,412</b><span>Students Enrolled</span></div>
+      <div class="stat"><b>5</b><span>Flagship Campuses</span></div>
+      <div class="stat"><b>1,184</b><span>Certificated Teachers</span></div>
+      <div class="stat"><b>94.6%</b><span>Graduation Rate</span></div>
+      <div class="stat"><b>24:1</b><span>Student–Teacher Ratio</span></div>
+      <div class="stat"><b>$412M</b><span>Annual Budget</span></div>
+      <div class="stat"><b>96.1%</b><span>Attendance Rate</span></div>
+      <div class="stat"><b>61%</b><span>A–G Completion</span></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="kicker">News &amp; Highlights</div>
+    <h2>What's Happening in Harlam</h2>
+    <div class="cards" style="margin-top:20px">
+      <div class="card orange">
+        <span class="tag">Athletics</span>
+        <h3>Joseph's Middle School archery team takes CIF regional title</h3>
+        <p>The Falcons' precision program continues its five-year winning streak at the Orange County middle school invitational.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Arts</span>
+        <h3>Kynam High's spring showcase draws record crowds</h3>
+        <p>Over 2,000 community members attended the annual Modern Arts Exhibition, featuring student installations and — new this year — a juried meme retrospective.</p>
+      </div>
+      <div class="card orange">
+        <span class="tag">Facilities</span>
+        <h3>Measure H bond breaks ground on new drift-safe practice lot</h3>
+        <p>Stephen's High School motorsports pavilion is on schedule for a Fall 2026 opening, complete with regulation skate bowls.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<div class="page" id="page-about">
+  <section class="wrap">
+    <div class="kicker">Our District</div>
+    <h2>About Harlam Unified</h2>
+    <p class="lede">Founded in 1953 at the corner of orange groves and opportunity, Harlam USD has grown into one of Orange County's most distinctive unified districts.</p>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Mission</h3>
+        <p>To prepare every student for college, career, and community life through rigorous academics and boldly specialized pathways you will not find anywhere else. Anywhere.</p>
+      </div>
+      <div class="card orange">
+        <h3>Vision</h3>
+        <p>A district where a student can master oil painting before lunch and parallel drifting after — safely, legally, and with full academic credit.</p>
+      </div>
+      <div class="card">
+        <h3>Core Values</h3>
+        <p>Excellence, curiosity, community, and the firm belief that "well-rounded" should be taken literally, like a skate bowl.</p>
+      </div>
+    </div>
+
+    <h2 style="margin-top:44px">Board of Education</h2>
+    <p class="lede">Trustees are elected to four-year terms and meet the second and fourth Tuesday of each month at the District Office.</p>
+    <table>
+      <tr><th>Trustee</th><th>Area</th><th>Term Expires</th></tr>
+      <tr><td>Dr. Marisol Vega, President</td><td>Area 1 — Old Towne</td><td>2028</td></tr>
+      <tr><td>Kenji Okamoto, Vice President</td><td>Area 2 — El Modena</td><td>2026</td></tr>
+      <tr><td>Patricia Nguyen, Clerk</td><td>Area 3 — Orange Park Acres</td><td>2028</td></tr>
+      <tr><td>Samuel Ferretti</td><td>Area 4 — West Orange</td><td>2026</td></tr>
+      <tr><td>Deborah Askew</td><td>Area 5 — Santiago Hills</td><td>2028</td></tr>
+    </table>
+
+    <h2 style="margin-top:44px">Student Demographics</h2>
+    <table>
+      <tr><th>Group</th><th>Percent of Enrollment</th></tr>
+      <tr><td>Hispanic or Latino</td><td>52.4%</td></tr>
+      <tr><td>White</td><td>24.1%</td></tr>
+      <tr><td>Asian</td><td>14.8%</td></tr>
+      <tr><td>Two or More Races</td><td>4.9%</td></tr>
+      <tr><td>Black or African American</td><td>2.1%</td></tr>
+      <tr><td>Other</td><td>1.7%</td></tr>
+      <tr><td>English Learners</td><td>19.3%</td></tr>
+      <tr><td>Socioeconomically Disadvantaged</td><td>44.7%</td></tr>
+      <tr><td>Students with Disabilities</td><td>13.2%</td></tr>
+    </table>
+  </section>
+</div>
+
+<!-- ============ SCHOOLS ============ -->
+<div class="page" id="page-schools">
+  <section class="wrap">
+    <div class="kicker">Our Campuses</div>
+    <h2>Schools of Harlam USD</h2>
+    <p class="lede">Five campuses. Five wildly specific specializations. One district that stopped asking "why?" a long time ago and started asking "why not?"</p>
+
+    <div class="cards">
+      <div class="card orange">
+        <span class="tag">Grades TK–6</span>
+        <h3>Ez's Elementary School of Self-Defense and IT</h3>
+        <p>Where students learn to defend their bodies and their networks. Curriculum spans phonics, fractions, situational awareness, and enterprise-grade password hygiene by the third grade.</p>
+        <div class="meta">
+          <div><span>Enrollment</span><b>3,890</b></div>
+          <div><span>Mascot</span><b>The Firewalls</b></div>
+          <div><span>API Uptime</span><b>99.98%</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">Grades 7–8</span>
+        <h3>Brian's Middle School of Film and Animation</h3>
+        <p>A fully rigged production campus where every book report is a storyboard and the cafeteria doubles as a green-screen stage. Home of the Orange County Junior Film Festival.</p>
+        <div class="meta">
+          <div><span>Enrollment</span><b>4,120</b></div>
+          <div><span>Mascot</span><b>The Key Frames</b></div>
+          <div><span>Render Farm Nodes</span><b>64</b></div>
+        </div>
+      </div>
+
+      <div class="card orange">
+        <span class="tag">Grades 7–8</span>
+        <h3>Joseph's Middle School of Soccer and Weapons Training</h3>
+        <p>A dual-pathway athletics campus pairing elite futsal development with CIF-sanctioned archery, fencing, and Olympic-style marksmanship — all under certified coaching and very serious supervision.</p>
+        <div class="meta">
+          <div><span>Enrollment</span><b>3,760</b></div>
+          <div><span>Mascot</span><b>The Falcons</b></div>
+          <div><span>League Titles</span><b>11</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">Grades 9–12</span>
+        <h3>Kynam High School of Modern Arts and Internet Troll</h3>
+        <p>The county's premier arts conservatory, offering studio art, sculpture, digital media, and the nation's first accredited program in rhetorical satire, meme theory, and applied online mischief (ethics prerequisite required).</p>
+        <div class="meta">
+          <div><span>Enrollment</span><b>7,940</b></div>
+          <div><span>Mascot</span><b>The Ratios</b></div>
+          <div><span>Grad Rate</span><b>95.2%</b></div>
+        </div>
+      </div>
+
+      <div class="card orange">
+        <span class="tag">Grades 9–12</span>
+        <h3>Stephen's High School of Japanese Skating and Drifting</h3>
+        <p>An immersion campus blending Japanese language and culture with competitive skateboarding and closed-course motorsports drifting. Students graduate bilingual and sideways.</p>
+        <div class="meta">
+          <div><span>Enrollment</span><b>7,702</b></div>
+          <div><span>Mascot</span><b>The Hachi-Rokus</b></div>
+          <div><span>Grad Rate</span><b>94.1%</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice">
+      <b>Enrollment note:</b> All specialized pathways are open-enrollment within district boundaries. Inter-district transfer requests for the Drifting program are reviewed twice yearly and require a parent signature, a helmet, and a moment of honest self-reflection.
+    </div>
+  </section>
+</div>
+
+<!-- ============ SUPERINTENDENT ============ -->
+<div class="page" id="page-superintendent">
+  <section class="wrap">
+    <div class="kicker">District Leadership</div>
+    <h2>Office of the Superintendent</h2>
+    <div class="supe" style="margin-top:24px">
+      <div class="portrait">LA<small>Official Portrait Pending</small></div>
+      <div>
+        <h3 style="font-family:var(--display);font-size:1.4rem">Lars Alexandersson, The Magician</h3>
+        <p style="color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.1em;margin:4px 0 16px">Superintendent of Schools • Appointed 2023</p>
+        <p>Superintendent Alexandersson brings to Harlam USD an unconventional résumé of tactical leadership, international experience, and stage magic. Known throughout the district for pulling balanced budgets out of seemingly empty hats, he has made the impossible feel routine: three consecutive years of rising graduation rates, a fully funded arts expansion, and a dove appearing at every board meeting, origin unknown.</p>
+        <blockquote>"There is no illusion in our results. The magic is the teachers. I just do the card tricks."</blockquote>
+        <p>Under his leadership, Harlam USD has been recognized twice by the Orange County Department of Education for innovation in specialized pathways, and once by the International Brotherhood of Magicians for "Best Vanishing Achievement Gap (Regional)."</p>
+        <p style="margin-top:14px"><b>Office:</b> District Office, Building A &nbsp;•&nbsp; <b>Email:</b> superintendent@harlamusd.example &nbsp;•&nbsp; <b>Phone:</b> (714) 555-0189</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ CONTACT ============ -->
+<div class="page" id="page-contact">
+  <section class="wrap">
+    <div class="kicker">Get in Touch</div>
+    <h2>Contact Us</h2>
+    <p class="lede">The District Office is located in the historic civic quarter of Orange, three blocks from the Plaza and one dimension from reality.</p>
+    <div class="cards">
+      <div class="card">
+        <h3>District Office</h3>
+        <p>123456 Fake Street<br>Orange, California 92856</p>
+        <div class="meta">
+          <div><span>Main Line</span><b>(714) 555-0188</b></div>
+          <div><span>Fax</span><b>(714) 555-0190</b></div>
+          <div><span>Hours</span><b>M–F, 7:30–4:30</b></div>
+        </div>
+      </div>
+      <div class="card orange">
+        <h3>Department Directory</h3>
+        <div class="meta" style="border-top:none;padding-top:0">
+          <div><span>Enrollment &amp; Records</span><b>ext. 101</b></div>
+          <div><span>Transportation</span><b>ext. 102</b></div>
+          <div><span>Nutrition Services</span><b>ext. 103</b></div>
+          <div><span>Special Education</span><b>ext. 104</b></div>
+          <div><span>Dove Retrieval</span><b>ext. 105</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Board Meetings</h3>
+        <p>Regular meetings are held the 2nd and 4th Tuesday of each month at 6:00 PM in the Boardroom, Building A. Public comment cards are available at the door. No card is ever the one you picked.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>Harlam Unified School District</h4>
+      123456 Fake Street<br>Orange, CA 92856<br>(714) 555-0188
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="#schools">Our Schools</a><br>
+      <a href="#superintendent">Superintendent</a><br>
+      <a href="#about">Board of Education</a><br>
+      <a href="#contact">Contact</a>
+    </div>
+    <div>
+      <h4>Accessibility</h4>
+      Harlam USD is committed to equal access for all students, families, and doves. This website is a work of fiction; all data is illustrative.
+    </div>
+  </div>
+  <div class="wrap"><div class="fineprint">© 2026 Harlam Unified School District — a fictional district. Any resemblance to real school districts, living or accredited, is coincidental.</div></div>
+</footer>
+
+<script>
+  const pages = ['home','about','schools','superintendent','contact'];
+  function route(){
+    let hash = location.hash.replace('#','') || 'home';
+    if(!pages.includes(hash)) hash = 'home';
+    pages.forEach(p=>{
+      document.getElementById('page-'+p).classList.toggle('on', p===hash);
+    });
+    document.querySelectorAll('#nav a').forEach(a=>{
+      a.classList.toggle('active', a.getAttribute('href') === '#'+hash);
+    });
+    window.scrollTo({top:0});
+  }
+  window.addEventListener('hashchange', route);
+  route();
+</script>
+</body>
+</html>
